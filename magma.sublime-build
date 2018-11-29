@@ -1,0 +1,6 @@
+{
+	"cmd": ["magma", "$file"],
+	"working_dir": "${project_path:${folder}}",
+	"selector": "source.magma",
+	"env": {"LANG": "de_DE.UTF-8"}
+}
