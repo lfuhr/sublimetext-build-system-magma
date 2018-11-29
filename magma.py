@@ -5,11 +5,17 @@ filename = sys.argv[1]
 with open(filename, 'r') as myfile: magmacode = myfile.read()
 
 # Load files
+filenames = []
+regex = '(?<!\/\/)(?<!\/\/ )load *\"([a-zA-Z0-9_]+\.(?:magma|mg))\";'
+
 def callback(match):
 	filename = match.group(1)
+	if filename in filenames:
+		raise Exception('recursive load')
 	with open(match.group(1), 'r') as myfile: return myfile.read()+"\n"
 
-magmacode = re.sub('(?<!\/\/)(?<!\/\/ )load *\"([a-zA-Z0-9_]+\.(?:magma|mg))\";', callback, magmacode)
+while re.search(regex, magmacode):
+	magmacode = re.sub(regex, callback, magmacode)
 
 r = requests.post("http://magma.maths.usyd.edu.au/calc/",
     data={"input": magmacode, "submit": "Submit"},
